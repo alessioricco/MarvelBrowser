@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MarvelBrowser</string>
+    <string name="title_journey_detail">Comic</string>
+    <string name="error_list_not_available">Comics list is not available.</string>
+    <string name="Retry">Retry</string>
+    <string name="header_origin_destination">Origin/Destination</string>
+    <string name="header_dep_arr">Dep/Arr</string>
+    <string name="details_title">Journey Details</string>
+    <string name="format_duration_label">Duration %s</string>
+    <string name="format_operated_by">Operated by %s</string>
+    <string name="json_filename">comics.json</string>
+    <string name="error_retrieving_list">Error retrieving Comics list</string>
+    <string name="header_small_orig_dest">Orig/Dest</string>
+</resources>

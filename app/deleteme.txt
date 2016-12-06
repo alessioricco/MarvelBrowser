@@ -1,0 +1,1 @@
+http://gateway.marvel.com:80/v1/public/comics?format=comic&formatType=comic&noVariants=true&apikey=9a14b1a84d5e4b76a746857f5f887c85
