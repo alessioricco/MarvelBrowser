@@ -5,18 +5,26 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
-import com.google.gson.Gson;
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import it.alessioricco.marvelbrowser.R;
 import it.alessioricco.marvelbrowser.activities.details.ComicsDetailActivity;
 import it.alessioricco.marvelbrowser.activities.list.adapter.ComicsListViewAdapter;
+import it.alessioricco.marvelbrowser.injection.ObjectGraphSingleton;
 import it.alessioricco.marvelbrowser.models.comics.Comics;
-import it.alessioricco.marvelbrowser.utils.JsonUtils;
-import it.alessioricco.marvelbrowser.utils.StringUtils;
+import it.alessioricco.marvelbrowser.service.MarvelComicsService;
+import it.alessioricco.marvelbrowser.utils.NetworkStatus;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * An activity representing a list of Journeys. This activity
@@ -27,11 +35,22 @@ import it.alessioricco.marvelbrowser.utils.StringUtils;
  * item details side-by-side using two vertical panes.
  */
 public class ComicsListActivity extends AppCompatActivity {
+    private final String TAG = ComicsListActivity.class.getSimpleName();
 
     private Comics comics;
 
     @InjectView(R.id.comic_list)
     RecyclerView recyclerView;
+
+    @Inject
+    MarvelComicsService MarvelComicsService;
+
+    private ComicsListViewAdapter comicsListViewAdapter;
+
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
+
+    int currentNetworkStatus = NetworkStatus.NOCONNECTION;
+
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -66,45 +85,158 @@ public class ComicsListActivity extends AppCompatActivity {
      * initialize the custom objects
      */
     private void initialize() {
+
+        ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
+
+        comicsListViewAdapter = new ComicsListViewAdapter(comics, this, mTwoPane);
+        recyclerView.setAdapter(comicsListViewAdapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        updateJourneyList();
-
+        fetchComics();
     }
 
-    private void updateJourneyList() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-        final String json = JsonUtils.loadJSONFromAsset(this,getString(R.string.json_filename));
-        if (StringUtils.isNullOrEmpty(json)) {
-            showUpdateErrorMessage(R.string.error_list_not_available);
-            return;
-        }
-
-        // this is the trick for array deserialization
-        //Type listType = new TypeToken<Comics>(){}.getType();
-        comics = new Gson().fromJson(json, Comics.class);
-
-        if (comics == null) {
-            // implement a snackbar
-            showUpdateErrorMessage(R.string.error_retrieving_list);
-            return;
-        }
-
-        recyclerView.setAdapter(new ComicsListViewAdapter(comics, this, mTwoPane));
+        // to avoid memory leaks
+        compositeSubscription.unsubscribe();
     }
 
     private void  showUpdateErrorMessage(int res) {
         Snackbar.make(recyclerView, res, Snackbar.LENGTH_LONG)
-                .setAction(R.string.Retry, new View.OnClickListener() {
+                .setAction(R.string.retry, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        updateJourneyList();
+                        fetchComics();
                     }
                 }).show();
+    }
+
+    void startProgress() {
+
+//        if (swipeRefreshLayout.isRefreshing()) {
+//            return;
+//        }
+//
+//        if (pDialog != null) {
+//            pDialog.dismiss();
+//            pDialog = null;
+//            return;
+//        }
+//        pDialog = new ProgressDialog(this);
+//        pDialog.setMessage(getString(R.string.downloading));
+//        pDialog.show();
+    }
+
+    /**
+     * remove the progress dialog
+     *
+     * it dismiss the the dialog to prevent a leak
+     * http://stackoverflow.com/questions/6614692/progressdialog-how-to-prevent-leaked-window
+     */
+    void endProgress() {
+
+//        if (swipeRefreshLayout.isRefreshing()) {
+//            swipeRefreshLayout.setRefreshing(false);
+//            return;
+//        }
+//
+//        if (pDialog == null) {
+//            return;
+//        }
+//        pDialog.hide();
+//        pDialog.dismiss();
+    }
+
+    /**
+     * Display an error message with a retry button
+     */
+    private void showDownloadErrorMessage() {
+
+        showErrorMessage(R.string.error_retrieving_list);
+    }
+
+    /**
+     * Display a network error message with a retry button
+     */
+    private void showNetworkErrorMessage() {
+
+        showErrorMessage(R.string.error_network);
+    }
+
+    private void showErrorMessage(int resourceId) {
+
+        Snackbar.make(recyclerView, resourceId, Snackbar.LENGTH_LONG)
+                .setAction(R.string.retry, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fetchComics();
+                    }
+                })
+                .show();
+    }
+
+    private void fetchComics() {
+        // it will fetch images
+        if (compositeSubscription.isUnsubscribed()) {
+            return;
+        }
+
+        //todo: we should handle an event
+        try {
+            currentNetworkStatus = NetworkStatus.isInternetConnected(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, String.format("network status %d", currentNetworkStatus));
+        if (currentNetworkStatus == NetworkStatus.NOCONNECTION) {
+            showNetworkErrorMessage();
+            return;
+        }
+
+        compositeSubscription.add(getComicsSubscription());
+    }
+
+    private Subscription getComicsSubscription() {
+        startProgress();
+        final Observable<Comics> observable = MarvelComicsService.getComicsList();
+
+        return observable
+                .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Comics>() {
+                    @Override
+                    public void onCompleted() {
+                        //Log.d(TAG, "getFeedSubscription completed");
+                        endProgress();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (e != null) {
+                            //Log.e(TAG, e.getLocalizedMessage());
+                        }
+                        endProgress();
+                        showDownloadErrorMessage();
+                    }
+
+                    @Override
+                    public void onNext(Comics feed) {
+
+                        //convertFeedToGalleryImage(feed);
+                        comics = feed;
+                        comicsListViewAdapter.setComics(comics);
+                        comicsListViewAdapter.notifyDataSetChanged();
+
+                    }
+                });
+
     }
 }

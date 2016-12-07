@@ -31,12 +31,16 @@ public class ComicsListViewAdapter
     final private Boolean twoPane;
 
     final private AppCompatActivity appCompatActivity;
-    final Comics comics;
+    Comics comics;
 
     public ComicsListViewAdapter(Comics data, AppCompatActivity appCompatActivity, Boolean twoPane) {
         this.twoPane = twoPane;
         this.appCompatActivity = appCompatActivity;
-        comics = data;
+        this.comics = data;
+    }
+
+    public void setComics(final Comics comics) {
+        this.comics = comics;
     }
 
     @Override
@@ -80,6 +84,14 @@ public class ComicsListViewAdapter
 
     @Override
     public int getItemCount() {
+
+        if (comics == null) {
+            return 0;
+        }
+        if (comics.getData() == null) {
+            return 0;
+        }
+
         return comics.getData().getResults().size();
     }
 

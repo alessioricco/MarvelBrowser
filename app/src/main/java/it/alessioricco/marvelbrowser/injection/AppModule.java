@@ -6,13 +6,13 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import it.alessioricco.marvelbrowser.activities.list.ComicsListActivity;
 import it.alessioricco.marvelbrowser.api.RestAdapterFactory;
 import it.alessioricco.marvelbrowser.service.MarvelComicsService;
 import it.alessioricco.marvelbrowser.App;
 
 
 /**
- * Created by alessioricco on 02/10/2016.
  *
  * The class providing all the factories to be used for dependency injection with dagger
  */
@@ -21,6 +21,7 @@ import it.alessioricco.marvelbrowser.App;
         injects = {
                 App.class,
                 MarvelComicsService.class,
+                ComicsListActivity.class,
                 RestAdapterFactory.class
         },
         library = true)
