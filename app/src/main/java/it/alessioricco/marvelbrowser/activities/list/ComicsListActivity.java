@@ -15,8 +15,8 @@ import it.alessioricco.marvelbrowser.R;
 import it.alessioricco.marvelbrowser.activities.details.ComicsDetailActivity;
 import it.alessioricco.marvelbrowser.activities.list.adapter.ComicsListViewAdapter;
 import it.alessioricco.marvelbrowser.models.comics.Comics;
-import it.alessioricco.marvelbrowser.utilities.JsonUtils;
-import it.alessioricco.marvelbrowser.utilities.StringUtils;
+import it.alessioricco.marvelbrowser.utils.JsonUtils;
+import it.alessioricco.marvelbrowser.utils.StringUtils;
 
 /**
  * An activity representing a list of Journeys. This activity

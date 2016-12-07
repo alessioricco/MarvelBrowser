@@ -1,26 +1,14 @@
 package it.alessioricco.marvelbrowser.utils;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowResources;
 
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.Type;
-import java.util.List;
-
 import it.alessioricco.marvelbrowser.BuildConfig;
-import it.alessioricco.marvelbrowser.utilities.JsonUtils;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

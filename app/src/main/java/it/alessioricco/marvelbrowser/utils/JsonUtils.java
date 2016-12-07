@@ -1,4 +1,4 @@
-package it.alessioricco.marvelbrowser.utilities;
+package it.alessioricco.marvelbrowser.utils;
 
 import android.content.Context;
 

@@ -20,6 +20,7 @@ import it.alessioricco.marvelbrowser.activities.details.ComicsDetailActivity;
 import it.alessioricco.marvelbrowser.activities.details.ComicsDetailFragment;
 import it.alessioricco.marvelbrowser.models.comics.Comics;
 import it.alessioricco.marvelbrowser.models.comics.Result;
+import it.alessioricco.marvelbrowser.utils.ImageDownloader;
 
 /**
  * adapter for the recycle view (main list)
@@ -48,9 +49,11 @@ public class ComicsListViewAdapter
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
+        Context context = appCompatActivity.getApplication().getApplicationContext();
         final Result result = comics.getData().getResults().get(position);
 
         holder.title.setText(result.getTitle());
+        ImageDownloader.go(context, result.getThumbnail().getPath(), holder.cover);
 
         holder.viewRow.setOnClickListener(new View.OnClickListener() {
             @Override
