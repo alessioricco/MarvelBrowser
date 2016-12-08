@@ -20,6 +20,8 @@ import it.alessioricco.marvelbrowser.activities.details.ComicsDetailActivity;
 import it.alessioricco.marvelbrowser.activities.details.ComicsDetailFragment;
 import it.alessioricco.marvelbrowser.models.comics.Comics;
 import it.alessioricco.marvelbrowser.models.comics.Result;
+import it.alessioricco.marvelbrowser.models.comics.Thumbnail;
+import it.alessioricco.marvelbrowser.utils.ComicBookCoverUrlHelper;
 import it.alessioricco.marvelbrowser.utils.ImageDownloader;
 
 /**
@@ -57,7 +59,9 @@ public class ComicsListViewAdapter
         final Result result = comics.getData().getResults().get(position);
 
         holder.title.setText(result.getTitle());
-        ImageDownloader.go(context, result.getThumbnail().getPath(), holder.cover);
+        final Thumbnail thumbnail = result.getThumbnail();
+        final String url = ComicBookCoverUrlHelper.getSmallCover(thumbnail.getPath(),thumbnail.getExtension());
+        ImageDownloader.go(context, url, holder.cover);
 
         holder.viewRow.setOnClickListener(new View.OnClickListener() {
             @Override

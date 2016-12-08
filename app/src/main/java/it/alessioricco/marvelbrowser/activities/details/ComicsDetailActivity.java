@@ -7,9 +7,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import it.alessioricco.marvelbrowser.R;
 import it.alessioricco.marvelbrowser.activities.list.ComicsListActivity;
+import it.alessioricco.marvelbrowser.models.comics.Result;
+import it.alessioricco.marvelbrowser.models.comics.Thumbnail;
+import it.alessioricco.marvelbrowser.utils.ComicBookCoverUrlHelper;
+import it.alessioricco.marvelbrowser.utils.ImageDownloader;
 
 /**
  * An activity representing a single Journey detail screen. This
@@ -19,10 +26,16 @@ import it.alessioricco.marvelbrowser.activities.list.ComicsListActivity;
  */
 public class ComicsDetailActivity extends AppCompatActivity {
 
+    @InjectView(R.id.background_cover)
+    ImageView cover;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comicbook_detail);
+
+        ButterKnife.inject(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
@@ -46,7 +59,18 @@ public class ComicsDetailActivity extends AppCompatActivity {
             // using a fragment transaction.
             final Bundle arguments = new Bundle();
             final String argId = ComicsDetailFragment.ARG_COMICBOOK;
-            arguments.putSerializable(argId, getIntent().getSerializableExtra(argId));
+
+            final Result comicBook = (Result) getIntent().getSerializableExtra(argId);
+            if (comicBook == null) {
+                return;
+            }
+
+            arguments.putSerializable(argId, comicBook);
+
+            final Thumbnail thumbnail = comicBook.getThumbnail();
+            final String url = ComicBookCoverUrlHelper.getBigCover(thumbnail.getPath(),thumbnail.getExtension());
+            ImageDownloader.go(this.getApplicationContext(),url,cover);
+
 
             final ComicsDetailFragment fragment = new ComicsDetailFragment();
             fragment.setArguments(arguments);

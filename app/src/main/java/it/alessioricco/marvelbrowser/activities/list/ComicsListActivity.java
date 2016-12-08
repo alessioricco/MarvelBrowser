@@ -3,10 +3,12 @@ package it.alessioricco.marvelbrowser.activities.list;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import javax.inject.Inject;
 
@@ -17,6 +19,7 @@ import it.alessioricco.marvelbrowser.activities.details.ComicsDetailActivity;
 import it.alessioricco.marvelbrowser.activities.list.adapter.ComicsListViewAdapter;
 import it.alessioricco.marvelbrowser.injection.ObjectGraphSingleton;
 import it.alessioricco.marvelbrowser.models.comics.Comics;
+import it.alessioricco.marvelbrowser.models.comics.Result;
 import it.alessioricco.marvelbrowser.service.MarvelComicsService;
 import it.alessioricco.marvelbrowser.utils.NetworkStatus;
 import rx.Observable;
@@ -37,21 +40,19 @@ import rx.subscriptions.CompositeSubscription;
 public class ComicsListActivity extends AppCompatActivity {
     private final String TAG = ComicsListActivity.class.getSimpleName();
 
-    private Comics comics;
-
     @InjectView(R.id.comic_list)
     RecyclerView recyclerView;
+
+    @InjectView(R.id.number_of_pages)
+    TextView numberOfPages;
 
     @Inject
     MarvelComicsService MarvelComicsService;
 
-    private ComicsListViewAdapter comicsListViewAdapter;
-
-    private CompositeSubscription compositeSubscription = new CompositeSubscription();
-
     int currentNetworkStatus = NetworkStatus.NOCONNECTION;
-
-
+    private Comics comics;
+    private ComicsListViewAdapter comicsListViewAdapter;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
@@ -91,6 +92,8 @@ public class ComicsListActivity extends AppCompatActivity {
 
         comicsListViewAdapter = new ComicsListViewAdapter(comics, this, mTwoPane);
         recyclerView.setAdapter(comicsListViewAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
     }
 
     @Override
@@ -204,6 +207,15 @@ public class ComicsListActivity extends AppCompatActivity {
         compositeSubscription.add(getComicsSubscription());
     }
 
+    private void UpdateNumberOfPages() {
+
+        int pages = 0;
+        for(Result comicBook : comics.getData().getResults()) {
+            pages += comicBook.getPageCount();
+        }
+        numberOfPages.setText(String.format("%d pages", pages));
+    }
+
     private Subscription getComicsSubscription() {
         startProgress();
         final Observable<Comics> observable = MarvelComicsService.getComicsList();
@@ -234,7 +246,7 @@ public class ComicsListActivity extends AppCompatActivity {
                         comics = feed;
                         comicsListViewAdapter.setComics(comics);
                         comicsListViewAdapter.notifyDataSetChanged();
-
+                        UpdateNumberOfPages();
                     }
                 });
 

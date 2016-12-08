@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.ButterKnife;
@@ -14,6 +15,9 @@ import butterknife.InjectView;
 import it.alessioricco.marvelbrowser.R;
 import it.alessioricco.marvelbrowser.activities.list.ComicsListActivity;
 import it.alessioricco.marvelbrowser.models.comics.Result;
+import it.alessioricco.marvelbrowser.models.comics.Thumbnail;
+import it.alessioricco.marvelbrowser.utils.ComicBookCoverUrlHelper;
+import it.alessioricco.marvelbrowser.utils.ImageDownloader;
 
 
 /**
@@ -27,6 +31,9 @@ public class ComicsDetailFragment extends Fragment {
     @InjectView(R.id.details_title)
     TextView title;
 
+//    @InjectView(R.id.background_cover)
+//    ImageView cover;
+
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -37,7 +44,7 @@ public class ComicsDetailFragment extends Fragment {
      * The dummy content this fragment is presenting.
      */
     //private Journey journey;
-private Result comicBook;
+    private Result comicBook;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -61,8 +68,8 @@ private Result comicBook;
             final Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                final String title = getString(R.string.details_title);
-                appBarLayout.setTitle(title);
+
+                appBarLayout.setTitle(comicBook.getTitle());
             }
 
 

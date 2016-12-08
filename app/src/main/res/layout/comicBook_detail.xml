@@ -1,22 +1,25 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/colorDetailBg"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <TextView
-        android:text="From"
-        android:id="@+id/details_title"
-        android:paddingTop="@dimen/padding_detail"
-        android:paddingLeft="@dimen/padding_detail"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="normal|bold" />
 
-    <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@color/colorDetailBg"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:text="From"
+            android:id="@+id/details_title"
+            android:paddingTop="@dimen/padding_detail"
+            android:paddingLeft="@dimen/padding_detail"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="normal|bold" />
+
+        <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
         <!--xmlns:tools="http://schemas.android.com/tools"-->
         <!--android:id="@+id/journey_origin_station"-->
         <!--style="?android:attr/textAppearanceLarge"-->
@@ -30,7 +33,7 @@
         <!--android:layout_below="@id/label_origin"-->
         <!--tools:appCompatActivity="it.alessioricco.marvelbrowser.activities.details.ComicDetailFragment" />-->
 
-    <!--<TextView-->
+        <!--<TextView-->
         <!--android:text="Departure"-->
         <!--android:id="@+id/label_departure"-->
         <!--android:paddingTop="@dimen/padding_detail"-->
@@ -42,7 +45,7 @@
         <!--android:layout_below="@id/journey_origin_station"-->
         <!--android:textStyle="normal|bold" />-->
 
-    <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
         <!--xmlns:tools="http://schemas.android.com/tools"-->
         <!--android:id="@+id/journey_departure"-->
         <!--style="?android:attr/textAppearanceLarge"-->
@@ -54,7 +57,7 @@
         <!--android:textIsSelectable="true"-->
         <!--tools:appCompatActivity="it.alessioricco.marvelbrowser.activities.details.ComicDetailFragment" />-->
 
-    <!--<TextView-->
+        <!--<TextView-->
         <!--android:text="To"-->
         <!--android:id="@+id/label_destination"-->
         <!--android:paddingTop="@dimen/padding_detail"-->
@@ -66,7 +69,7 @@
         <!--android:layout_height="wrap_content"-->
         <!--android:textStyle="normal|bold" />-->
 
-    <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
         <!--xmlns:tools="http://schemas.android.com/tools"-->
         <!--android:id="@+id/journey_destination_station"-->
         <!--style="?android:attr/textAppearanceLarge"-->
@@ -80,7 +83,7 @@
         <!--android:layout_below="@id/label_destination"-->
         <!--tools:appCompatActivity="it.alessioricco.marvelbrowser.activities.details.ComicDetailFragment" />-->
 
-    <!--<TextView-->
+        <!--<TextView-->
         <!--android:text="Arrival"-->
         <!--android:id="@+id/label_arrival"-->
         <!--android:paddingTop="@dimen/padding_detail"-->
@@ -92,7 +95,7 @@
         <!--android:layout_below="@id/journey_destination_station"-->
         <!--android:textStyle="normal|bold" />-->
 
-    <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
         <!--xmlns:tools="http://schemas.android.com/tools"-->
         <!--android:id="@+id/journey_arrival"-->
         <!--style="?android:attr/textAppearanceLarge"-->
@@ -106,7 +109,7 @@
         <!--android:textIsSelectable="true"-->
         <!--tools:appCompatActivity="it.alessioricco.marvelbrowser.activities.details.ComicDetailFragment" />-->
 
-    <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
         <!--xmlns:tools="http://schemas.android.com/tools"-->
         <!--android:id="@+id/journey_duration"-->
         <!--style="?android:attr/textAppearanceLarge"-->
@@ -118,7 +121,7 @@
         <!--android:textIsSelectable="true"-->
         <!--tools:appCompatActivity="it.alessioricco.marvelbrowser.activities.details.ComicDetailFragment" />-->
 
-    <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
         <!--xmlns:tools="http://schemas.android.com/tools"-->
         <!--android:id="@+id/journey_company"-->
         <!--style="?android:attr/textAppearanceLarge"-->
@@ -133,7 +136,7 @@
         <!--android:layout_below="@id/journey_duration"-->
         <!--android:textIsSelectable="true"-->
         <!--tools:appCompatActivity="it.alessioricco.marvelbrowser.activities.details.ComicDetailFragment" />-->
-    <!---->
+        <!---->
 
-</RelativeLayout>
+    </LinearLayout>
 
