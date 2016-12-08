@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -33,15 +35,16 @@ public class ComicsListViewAdapter
     final private Boolean twoPane;
 
     final private AppCompatActivity appCompatActivity;
-    Comics comics;
+    private List<Result> comics;
 
-    public ComicsListViewAdapter(Comics data, AppCompatActivity appCompatActivity, Boolean twoPane) {
+
+    public ComicsListViewAdapter(List<Result> data, AppCompatActivity appCompatActivity, Boolean twoPane) {
         this.twoPane = twoPane;
         this.appCompatActivity = appCompatActivity;
         this.comics = data;
     }
 
-    public void setComics(final Comics comics) {
+    public void setComics(List<Result> comics) {
         this.comics = comics;
     }
 
@@ -56,7 +59,7 @@ public class ComicsListViewAdapter
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         Context context = appCompatActivity.getApplication().getApplicationContext();
-        final Result result = comics.getData().getResults().get(position);
+        final Result result = comics.get(position);
 
         holder.title.setText(result.getTitle());
         final Thumbnail thumbnail = result.getThumbnail();
@@ -92,11 +95,9 @@ public class ComicsListViewAdapter
         if (comics == null) {
             return 0;
         }
-        if (comics.getData() == null) {
-            return 0;
-        }
 
-        return comics.getData().getResults().size();
+
+        return comics.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

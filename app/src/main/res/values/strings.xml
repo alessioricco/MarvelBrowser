@@ -7,4 +7,5 @@
     <string name="json_filename">comics.json</string>
     <string name="error_retrieving_list">Error retrieving Comics list</string>
     <string name="error_network">Network not available</string>
+    <string name="insert_available_budget">Insert available budget</string>
 </resources>

@@ -14,7 +14,6 @@ public class MarvelComicsService {
 
     private static final int LIMIT = 100;
 
-
     @Inject
     RestAdapterFactory restAdapterFactory;
 

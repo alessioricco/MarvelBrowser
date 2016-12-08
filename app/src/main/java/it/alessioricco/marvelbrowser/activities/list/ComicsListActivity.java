@@ -1,14 +1,26 @@
 package it.alessioricco.marvelbrowser.activities.list;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -19,6 +31,7 @@ import it.alessioricco.marvelbrowser.activities.details.ComicsDetailActivity;
 import it.alessioricco.marvelbrowser.activities.list.adapter.ComicsListViewAdapter;
 import it.alessioricco.marvelbrowser.injection.ObjectGraphSingleton;
 import it.alessioricco.marvelbrowser.models.comics.Comics;
+import it.alessioricco.marvelbrowser.models.comics.Price;
 import it.alessioricco.marvelbrowser.models.comics.Result;
 import it.alessioricco.marvelbrowser.service.MarvelComicsService;
 import it.alessioricco.marvelbrowser.utils.NetworkStatus;
@@ -40,6 +53,9 @@ import rx.subscriptions.CompositeSubscription;
 public class ComicsListActivity extends AppCompatActivity {
     private final String TAG = ComicsListActivity.class.getSimpleName();
 
+    @InjectView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     @InjectView(R.id.comic_list)
     RecyclerView recyclerView;
 
@@ -49,8 +65,10 @@ public class ComicsListActivity extends AppCompatActivity {
     @Inject
     MarvelComicsService MarvelComicsService;
 
+    private String availableBudget = "";
+
     int currentNetworkStatus = NetworkStatus.NOCONNECTION;
-    private Comics comics;
+    //private List<Result> comics;
     private ComicsListViewAdapter comicsListViewAdapter;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
     /**
@@ -90,10 +108,62 @@ public class ComicsListActivity extends AppCompatActivity {
         ObjectGraphSingleton.getInstance().inject(this);
         ButterKnife.inject(this);
 
-        comicsListViewAdapter = new ComicsListViewAdapter(comics, this, mTwoPane);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                fetchComics();
+            }
+        });
+
+
+        comicsListViewAdapter = new ComicsListViewAdapter(null, this, mTwoPane);
         recyclerView.setAdapter(comicsListViewAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.budget) {
+            onShowBudgetDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    void onShowBudgetDialog() {
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setText(availableBudget.toString());
+
+        new AlertDialog
+                .Builder(this)
+                .setView(input)
+                .setTitle(R.string.insert_available_budget)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        availableBudget = input.getText().toString();
+                        fetchComics();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private void setBudgetValue() {
+        fetchComics();
     }
 
     @Override
@@ -207,10 +277,10 @@ public class ComicsListActivity extends AppCompatActivity {
         compositeSubscription.add(getComicsSubscription());
     }
 
-    private void UpdateNumberOfPages() {
+    private void UpdateNumberOfPages(List<Result> comics) {
 
         int pages = 0;
-        for(Result comicBook : comics.getData().getResults()) {
+        for(Result comicBook : comics) {
             pages += comicBook.getPageCount();
         }
         numberOfPages.setText(String.format("%d pages", pages));
@@ -226,14 +296,13 @@ public class ComicsListActivity extends AppCompatActivity {
                 .subscribe(new Subscriber<Comics>() {
                     @Override
                     public void onCompleted() {
-                        //Log.d(TAG, "getFeedSubscription completed");
                         endProgress();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         if (e != null) {
-                            //Log.e(TAG, e.getLocalizedMessage());
+                            Log.e(TAG, e.getLocalizedMessage());
                         }
                         endProgress();
                         showDownloadErrorMessage();
@@ -242,10 +311,48 @@ public class ComicsListActivity extends AppCompatActivity {
                     @Override
                     public void onNext(Comics feed) {
 
-                        comics = feed;
-                        comicsListViewAdapter.setComics(comics);
+                        Double budget = -1.0;
+
+                        try {
+                            budget = Double.parseDouble(availableBudget);
+                        }catch (Exception e) {
+
+                        }
+
+                        List<Result> filteredResult;
+
+                        if (budget >= 0) {
+                            Collections.sort(feed.getData().getResults(), new Comparator<Result>() {
+                                @Override
+                                public int compare(Result o, Result t1) {
+                                    return o.getPrices().get(0).getPrice().compareTo(t1.getPrices().get(0).getPrice());
+                                }
+                            });
+
+                            filteredResult = new ArrayList<>();
+                            for (Result result : feed.getData().getResults()) {
+
+                                if (result.getPrices() == null) {
+                                    continue;
+                                }
+                                final Price price = result.getPrices().get(0);
+                                if (price == null) {
+                                    continue;
+                                }
+                                if (budget >= price.getPrice()) {
+                                    budget -= price.getPrice();
+                                    filteredResult.add(result);
+                                }
+
+                            }
+                        } else {
+
+                            filteredResult = feed.getData().getResults();
+
+                        }
+                        comicsListViewAdapter.setComics(filteredResult);
                         comicsListViewAdapter.notifyDataSetChanged();
-                        UpdateNumberOfPages();
+                        UpdateNumberOfPages(filteredResult);
                     }
                 });
 
