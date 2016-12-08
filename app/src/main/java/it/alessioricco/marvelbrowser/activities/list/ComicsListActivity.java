@@ -193,18 +193,10 @@ public class ComicsListActivity extends AppCompatActivity {
 
     void startProgress() {
 
-//        if (swipeRefreshLayout.isRefreshing()) {
-//            return;
-//        }
-//
-//        if (pDialog != null) {
-//            pDialog.dismiss();
-//            pDialog = null;
-//            return;
-//        }
-//        pDialog = new ProgressDialog(this);
-//        pDialog.setMessage(getString(R.string.downloading));
-//        pDialog.show();
+        if (swipeRefreshLayout.isRefreshing()) {
+            return;
+        }
+
     }
 
     /**
@@ -215,16 +207,11 @@ public class ComicsListActivity extends AppCompatActivity {
      */
     void endProgress() {
 
-//        if (swipeRefreshLayout.isRefreshing()) {
-//            swipeRefreshLayout.setRefreshing(false);
-//            return;
-//        }
-//
-//        if (pDialog == null) {
-//            return;
-//        }
-//        pDialog.hide();
-//        pDialog.dismiss();
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+            return;
+        }
+
     }
 
     /**

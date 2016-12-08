@@ -12,7 +12,4 @@ public interface MarvelComicsAPI {
     @GET("/v1/public/comics")
     Observable<Comics> getComics(@Query("limit") int limit);
 
-    @GET("/v1/public/comics/{comicId}")
-    Observable<Comics> getComic(@Path("comicId") String comicId);
-
 }

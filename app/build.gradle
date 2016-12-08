@@ -24,6 +24,12 @@ def support_version = "25.0.1"
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' } // for caching
+    }
+
+
     compile "com.android.support:appcompat-v7:$support_version"
     compile "com.android.support:support-v4:$support_version"
     compile "com.android.support:recyclerview-v7:$support_version"
@@ -48,6 +54,13 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
+
+    //cache
+    compile('com.github.lowlevel-studios:storo:1.0.3') {
+        transitive = true
+    }
+
+
     // testing
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

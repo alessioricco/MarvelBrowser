@@ -1,11 +1,13 @@
 package it.alessioricco.marvelbrowser.api;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
 
 import it.alessioricco.marvelbrowser.injection.ObjectGraphSingleton;
 import it.alessioricco.marvelbrowser.utils.MD5Utils;
+import it.alessioricco.marvelbrowser.utils.NetworkStatus;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -31,9 +33,11 @@ public class RestAdapterFactory {
     protected String getBaseUrl() {
         return "http://gateway.marvel.com";
     }
+    private Context context;
 
-    public RestAdapterFactory() {
+    public RestAdapterFactory(Context context) {
         ObjectGraphSingleton.getInstance().inject(this);
+        this.context = context;
     }
 
     /**
@@ -66,6 +70,24 @@ public class RestAdapterFactory {
                                 .addQueryParameter("hash", MD5Utils.convertToMd5(timeStamp + APIKeys.PRIVATE + APIKeys.PUBLIC))
                                 .build();
                         return chain.proceed(chain.request().newBuilder().url(url).build());
+                    }
+                })
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Response originalResponse = chain.proceed(chain.request());
+
+                        if (context != null && NetworkStatus.isInternetConnected(context) != NetworkStatus.NOCONNECTION) {
+                            int maxAge = 60; // read from cache for 1 minute
+                            return originalResponse.newBuilder()
+                                    .header("Cache-Control", "public, max-age=" + maxAge)
+                                    .build();
+
+                        }
+                        int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
+                        return originalResponse.newBuilder()
+                                .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
+                                .build();
                     }
                 })
                 .build();

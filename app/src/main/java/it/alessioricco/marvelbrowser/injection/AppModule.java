@@ -62,7 +62,7 @@ public class AppModule {
      * @return a well formed RestAdapterFactory object
      */
     @Provides @Singleton public RestAdapterFactory provideRestAdapter() {
-        return new RestAdapterFactory();
+        return new RestAdapterFactory(app);
     }
 
 }

@@ -8,6 +8,8 @@ import java.util.List;
 import dagger.ObjectGraph;
 import it.alessioricco.marvelbrowser.injection.AppModule;
 import it.alessioricco.marvelbrowser.injection.ObjectGraphSingleton;
+import st.lowlevel.storo.Storo;
+import st.lowlevel.storo.StoroBuilder;
 
 
 public final class App extends Application {
@@ -21,6 +23,13 @@ public final class App extends Application {
             ObjectGraph objectGraph = ObjectGraph.create(getModules().toArray());
             ObjectGraphSingleton.setInstance(objectGraph);
             objectGraph.inject(this);
+        }
+
+
+        if (!Storo.isInitialized()) {
+            StoroBuilder.configure(100 * 1024)
+                    .setDefaultCacheDirectory(this)
+                    .initialize();
         }
 
     }

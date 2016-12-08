@@ -8,7 +8,7 @@ import retrofit2.Retrofit;
  */
 public class APIFactory {
 
-    public static MarvelComicsAPI createFlickrAPI(Retrofit retrofit) {
+    public static MarvelComicsAPI createMarvelAPI(Retrofit retrofit) {
         return retrofit.create(MarvelComicsAPI.class);
     }
 
