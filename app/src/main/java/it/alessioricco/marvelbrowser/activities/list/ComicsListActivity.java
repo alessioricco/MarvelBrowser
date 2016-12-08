@@ -242,7 +242,6 @@ public class ComicsListActivity extends AppCompatActivity {
                     @Override
                     public void onNext(Comics feed) {
 
-                        //convertFeedToGalleryImage(feed);
                         comics = feed;
                         comicsListViewAdapter.setComics(comics);
                         comicsListViewAdapter.notifyDataSetChanged();

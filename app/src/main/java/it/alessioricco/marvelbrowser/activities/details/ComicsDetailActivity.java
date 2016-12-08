@@ -71,7 +71,6 @@ public class ComicsDetailActivity extends AppCompatActivity {
             final String url = ComicBookCoverUrlHelper.getBigCover(thumbnail.getPath(),thumbnail.getExtension());
             ImageDownloader.go(this.getApplicationContext(),url,cover);
 
-
             final ComicsDetailFragment fragment = new ComicsDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

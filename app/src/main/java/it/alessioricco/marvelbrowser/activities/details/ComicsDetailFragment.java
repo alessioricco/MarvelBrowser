@@ -7,17 +7,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import it.alessioricco.marvelbrowser.R;
 import it.alessioricco.marvelbrowser.activities.list.ComicsListActivity;
+import it.alessioricco.marvelbrowser.models.comics.Creators;
+import it.alessioricco.marvelbrowser.models.comics.Item;
+import it.alessioricco.marvelbrowser.models.comics.Price;
 import it.alessioricco.marvelbrowser.models.comics.Result;
-import it.alessioricco.marvelbrowser.models.comics.Thumbnail;
-import it.alessioricco.marvelbrowser.utils.ComicBookCoverUrlHelper;
-import it.alessioricco.marvelbrowser.utils.ImageDownloader;
 
 
 /**
@@ -28,11 +27,21 @@ import it.alessioricco.marvelbrowser.utils.ImageDownloader;
  */
 public class ComicsDetailFragment extends Fragment {
 
-    @InjectView(R.id.details_title)
+    @InjectView(R.id.comicbook_title)
     TextView title;
 
-//    @InjectView(R.id.background_cover)
-//    ImageView cover;
+    @InjectView(R.id.comicbook_description)
+    TextView description;
+
+    @InjectView(R.id.comicbook_authors)
+    TextView authors;
+
+    @InjectView(R.id.comicbook_pages)
+    TextView pages;
+
+    @InjectView(R.id.comicbook_cost)
+    TextView cost;
+
 
     /**
      * The fragment argument representing the item ID that this fragment
@@ -86,6 +95,22 @@ public class ComicsDetailFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         if (comicBook != null) {
             title.setText(comicBook.getTitle());
+            description.setText(comicBook.getDescription());
+
+            pages.setText(String.format("%d pages",comicBook.getPageCount()));
+
+            StringBuilder prices = new StringBuilder();
+            for(Price price: comicBook.getPrices()) {
+                prices.append(String.format("%s (%.2f$) ", price.getType(), price.getPrice()));
+            }
+            this.cost.setText(prices);
+
+            StringBuilder authors = new StringBuilder();
+            for(Item creator: comicBook.getCreators().getItems()) {
+                prices.append(String.format("%s (%s) ", creator.getName(), creator.getRole()));
+            }
+            this.authors.setText(authors);
+
         }
 
         return rootView;
