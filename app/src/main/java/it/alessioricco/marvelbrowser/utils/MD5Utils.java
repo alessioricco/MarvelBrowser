@@ -1,7 +1,5 @@
 package it.alessioricco.marvelbrowser.utils;
 
-import java.io.UnsupportedEncodingException;
-
 public class MD5Utils {
 
     public static String convertToMd5(final String md5)  {

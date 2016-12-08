@@ -25,13 +25,6 @@ public final class App extends Application {
             objectGraph.inject(this);
         }
 
-
-        if (!Storo.isInitialized()) {
-            StoroBuilder.configure(100 * 1024)
-                    .setDefaultCacheDirectory(this)
-                    .initialize();
-        }
-
     }
 
     private List<Object> getModules() {
