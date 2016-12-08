@@ -8,8 +8,6 @@ import java.util.List;
 import dagger.ObjectGraph;
 import it.alessioricco.marvelbrowser.injection.AppModule;
 import it.alessioricco.marvelbrowser.injection.ObjectGraphSingleton;
-import st.lowlevel.storo.Storo;
-import st.lowlevel.storo.StoroBuilder;
 
 
 public final class App extends Application {

@@ -35,13 +35,11 @@ public class ComicsListViewAdapter
     final private Boolean twoPane;
 
     final private AppCompatActivity appCompatActivity;
-    private List<Result> comics;
+    private List<Result> comics = null;
 
-
-    public ComicsListViewAdapter(List<Result> data, AppCompatActivity appCompatActivity, Boolean twoPane) {
+    public ComicsListViewAdapter(AppCompatActivity appCompatActivity, Boolean twoPane) {
         this.twoPane = twoPane;
         this.appCompatActivity = appCompatActivity;
-        this.comics = data;
     }
 
     public void setComics(List<Result> comics) {
@@ -75,6 +73,7 @@ public class ComicsListViewAdapter
                     arguments.putSerializable(ComicsDetailFragment.ARG_COMICBOOK, result);
                     ComicsDetailFragment fragment = new ComicsDetailFragment();
                     fragment.setArguments(arguments);
+
                     appCompatActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.comicbook_detail_container, fragment)
                             .commit();
@@ -100,15 +99,15 @@ public class ComicsListViewAdapter
         return comics.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public final View viewRow;
 
         @InjectView(R.id.title)
-        TextView title;
+        public TextView title;
 
         @InjectView(R.id.cover)
-        ImageView cover;
+        public ImageView cover;
 
         public ViewHolder(View view) {
             super(view);

@@ -68,7 +68,7 @@ public class ComicsListActivity extends AppCompatActivity {
     private String availableBudget = "";
 
     int currentNetworkStatus = NetworkStatus.NOCONNECTION;
-    //private List<Result> comics;
+
     private ComicsListViewAdapter comicsListViewAdapter;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
     /**
@@ -117,7 +117,7 @@ public class ComicsListActivity extends AppCompatActivity {
         });
 
 
-        comicsListViewAdapter = new ComicsListViewAdapter(null, this, mTwoPane);
+        comicsListViewAdapter = new ComicsListViewAdapter(this, mTwoPane);
         recyclerView.setAdapter(comicsListViewAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));

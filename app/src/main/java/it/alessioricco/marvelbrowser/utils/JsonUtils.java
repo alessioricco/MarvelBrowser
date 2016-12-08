@@ -17,7 +17,7 @@ public class JsonUtils {
      * @param fileName  the json filename
      * @return          the file content as a string
      */
-    public static String loadJSONFromAsset2(Context context, String fileName) {
+    public static String loadJSONFromAsset(Context context, String fileName) {
         final String json;
         try {
 
